@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { assets } from "../assets/assets";
 import ProductItem from "../components/ProductItem";
 import Title from "../components/Title";
@@ -6,7 +6,6 @@ import { ShopContext } from "../context/ShopContext";
 
 const Collection = () => {
   const { products, search, showSearch } = useContext(ShopContext);
-  const [filterProducts, setFilterProducts] = useState([]);
   const [sortType, setSortType] = useState("relevant");
   const [showFilter, setShowFilter] = useState(false);
   const [category, setCategory] = useState([]);
@@ -30,8 +29,8 @@ const Collection = () => {
     }
   };
 
-  const applyFilter = useCallback(() => {
-    let productsCopy = products.slice();
+  const filterProducts = useMemo(() => {
+    let productsCopy = [...products];
 
     if (showSearch && search) {
       productsCopy = productsCopy.filter((item) =>
@@ -51,35 +50,14 @@ const Collection = () => {
       );
     }
 
-    setFilterProducts(productsCopy);
-  }, [products, search, showSearch, category, subCategory]);
+    if (sortType === "low-high") {
+      productsCopy.sort((a, b) => a.price - b.price);
+    } else if (sortType === "high-low") {
+      productsCopy.sort((a, b) => b.price - a.price);
+    }
 
-  const sortProducts = useCallback(
-    (type) => {
-      const productsCopy = filterProducts.slice();
-
-      switch (type) {
-        case "low-high":
-          setFilterProducts(productsCopy.sort((a, b) => a.price - b.price));
-          break;
-        case "high-low":
-          setFilterProducts(productsCopy.sort((a, b) => b.price - a.price));
-          break;
-        default:
-          applyFilter();
-          break;
-      }
-    },
-    [filterProducts, applyFilter],
-  );
-
-  useEffect(() => {
-    applyFilter();
-  }, [applyFilter]);
-
-  useEffect(() => {
-    sortProducts(sortType);
-  }, [sortType, sortProducts]);
+    return productsCopy;
+  }, [products, search, showSearch, category, subCategory, sortType]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-10 pt-10 border-t">
@@ -149,11 +127,11 @@ const Collection = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 gap-y-6">
-          {filterProducts.map((item) => (
+          {filterProducts.map((item, index) => (
             <ProductItem
               id={item._id}
               image={item.image}
-              key={item._id}
+              key={item._id || `product-${index}`}
               name={item.name}
               price={item.price}
             />
