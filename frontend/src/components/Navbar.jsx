@@ -1,11 +1,19 @@
 import { useContext, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
-  const { setShowSearch } = useContext(ShopContext);
+  const { setShowSearch, getCartCount, token, setToken } =
+    useContext(ShopContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+    navigate("/");
+  };
 
   return (
     <div className="flex justify-between items-center py-5 font-medium">
@@ -57,11 +65,32 @@ const Navbar = () => {
           />
           <div className="hidden group-hover:block right-0 absolute pt-4">
             <div className="flex flex-col gap-2 bg-slate-100 px-5 py-3 rounded w-36 text-gray-500">
-              <p className="hover:text-black cursor-pointer">
-                Tài khoản của tôi
-              </p>
-              <p className="hover:text-black cursor-pointer">Đơn hàng</p>
-              <p className="hover:text-black cursor-pointer">Đăng xuất</p>
+              {token ? (
+                <>
+                  <button
+                    className="hover:text-black cursor-pointer text-left bg-transparent border-none p-0"
+                    onClick={() => navigate("/orders")}
+                    type="button"
+                  >
+                    Đơn hàng
+                  </button>
+                  <button
+                    className="hover:text-black cursor-pointer text-left bg-transparent border-none p-0"
+                    onClick={handleLogout}
+                    type="button"
+                  >
+                    Đăng xuất
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="hover:text-black cursor-pointer text-left bg-transparent border-none p-0"
+                  onClick={() => navigate("/login")}
+                  type="button"
+                >
+                  Đăng nhập
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -69,7 +98,7 @@ const Navbar = () => {
         <Link className="relative" to="/cart">
           <img alt="cart" className="w-5 min-w-5" src={assets.cart_icon} />
           <p className="-right-1.25 -bottom-1.25 absolute bg-black rounded-full w-4 aspect-square text-[8px] text-white text-center leading-4">
-            0
+            {getCartCount()}
           </p>
         </Link>
 
@@ -126,6 +155,19 @@ const Navbar = () => {
           >
             LIÊN HỆ
           </NavLink>
+
+          {!token && (
+            <NavLink
+              className="py-2 pl-6 border"
+              onClick={() => {
+                setVisible(false);
+                navigate("/login");
+              }}
+              to="/login"
+            >
+              ĐĂNG NHẬP
+            </NavLink>
+          )}
         </div>
       </div>
     </div>
