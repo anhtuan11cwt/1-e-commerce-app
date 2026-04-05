@@ -1,4 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
+import { assets } from "../assets/assets";
 import ProductItem from "../components/ProductItem";
 import Title from "../components/Title";
 import { ShopContext } from "../context/ShopContext";
@@ -7,6 +8,27 @@ const Collection = () => {
   const { products, search, showSearch } = useContext(ShopContext);
   const [filterProducts, setFilterProducts] = useState([]);
   const [sortType, setSortType] = useState("relevant");
+  const [showFilter, setShowFilter] = useState(false);
+  const [category, setCategory] = useState([]);
+  const [subCategory, setSubCategory] = useState([]);
+
+  const toggleCategory = (e) => {
+    const value = e.target.value;
+    if (category.includes(value)) {
+      setCategory((prev) => prev.filter((item) => item !== value));
+    } else {
+      setCategory((prev) => [...prev, value]);
+    }
+  };
+
+  const toggleSubCategory = (e) => {
+    const value = e.target.value;
+    if (subCategory.includes(value)) {
+      setSubCategory((prev) => prev.filter((item) => item !== value));
+    } else {
+      setSubCategory((prev) => [...prev, value]);
+    }
+  };
 
   const applyFilter = useCallback(() => {
     let productsCopy = products.slice();
@@ -17,8 +39,20 @@ const Collection = () => {
       );
     }
 
+    if (category.length > 0) {
+      productsCopy = productsCopy.filter((item) =>
+        category.includes(item.category),
+      );
+    }
+
+    if (subCategory.length > 0) {
+      productsCopy = productsCopy.filter((item) =>
+        subCategory.includes(item.subCategory),
+      );
+    }
+
     setFilterProducts(productsCopy);
-  }, [products, search, showSearch]);
+  }, [products, search, showSearch, category, subCategory]);
 
   const sortProducts = useCallback(
     (type) => {
@@ -48,11 +82,56 @@ const Collection = () => {
   }, [sortType, sortProducts]);
 
   return (
-    <div className="flex flex-col sm:flex-row gap-10 sm:gap-10 pt-10 border-t">
-      <div className="min-w-60">
-        <p className="mb-3 text-xl flex items-center cursor-pointer gap-2">
+    <div className="flex flex-col sm:flex-row gap-10 pt-10 border-t">
+      <div className="min-w-60 sm:block">
+        <button
+          className="my-3 text-xl flex items-center cursor-pointer gap-2"
+          onClick={() => setShowFilter(!showFilter)}
+          type="button"
+        >
           BỘ LỌC
-        </p>
+          <img
+            alt=""
+            className={`h-3 sm:hidden ${showFilter ? "rotate-90" : ""}`}
+            src={assets.dropdown_icon}
+          />
+        </button>
+
+        <div className={`${showFilter ? "" : "hidden"} sm:block`}>
+          <div className="border pl-5 py-3 mt-6">
+            <p className="mb-3 text-sm font-medium">DANH MỤC</p>
+            <div className="flex flex-col gap-2 text-sm text-gray-600">
+              {["Nam", "Nữ", "Trẻ Em"].map((item) => (
+                <label className="flex gap-2 cursor-pointer" key={item}>
+                  <input
+                    checked={category.includes(item)}
+                    onChange={toggleCategory}
+                    type="checkbox"
+                    value={item}
+                  />
+                  {item}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="border pl-5 py-3 my-5">
+            <p className="mb-3 text-sm font-medium">LOẠI</p>
+            <div className="flex flex-col gap-2 text-sm text-gray-600">
+              {["Áo", "Quần", "Áo Mùa Đông"].map((item) => (
+                <label className="flex gap-2 cursor-pointer" key={item}>
+                  <input
+                    checked={subCategory.includes(item)}
+                    onChange={toggleSubCategory}
+                    type="checkbox"
+                    value={item}
+                  />
+                  {item}
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1">
