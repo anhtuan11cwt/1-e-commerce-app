@@ -19,7 +19,10 @@ const ShopContextProvider = (props) => {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
 
-  const [cartItems, setCartItems] = useState({});
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem("cartItems");
+    return savedCart ? JSON.parse(savedCart) : {};
+  });
   const [products, setProducts] = useState([]);
 
   const [token, setToken] = useState(() => localStorage.getItem("token") || "");
@@ -27,6 +30,12 @@ const ShopContextProvider = (props) => {
   const addToCart = async (itemId, size) => {
     if (!size) {
       toast.error("Vui lòng chọn kích thước");
+      return;
+    }
+
+    if (!token) {
+      toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng");
+      navigate("/login");
       return;
     }
 
@@ -44,6 +53,8 @@ const ShopContextProvider = (props) => {
     }
 
     setCartItems(cartData);
+
+    toast.success("Thêm vào giỏ hàng thành công");
 
     if (token) {
       try {
@@ -149,6 +160,11 @@ const ShopContextProvider = (props) => {
       getUserCart(token);
     }
   }, [token, getUserCart]);
+
+  // Save cart to localStorage
+  useEffect(() => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const value = {
     addToCart,

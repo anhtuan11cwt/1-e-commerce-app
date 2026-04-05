@@ -1,18 +1,24 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
-  const { setShowSearch, getCartCount, token, setToken } =
-    useContext(ShopContext);
+  const { setShowSearch, getCartCount, setToken } = useContext(ShopContext);
+  const [token, setTokenState] = useState(() => localStorage.getItem("token"));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setTokenState(localStorage.getItem("token"));
+  });
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setToken("");
     navigate("/");
+    toast.success("Đã đăng xuất");
   };
 
   return (

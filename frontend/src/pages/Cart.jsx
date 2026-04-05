@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
 import CartTotal from "../components/CartTotal";
 import Title from "../components/Title";
@@ -43,6 +44,7 @@ const Cart = () => {
 
   const handleDelete = (item) => {
     updateQuantity(item._id, item.size, 0);
+    toast.success("Đã xóa sản phẩm khỏi giỏ hàng");
   };
 
   return (
