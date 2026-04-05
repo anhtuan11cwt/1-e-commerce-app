@@ -12,7 +12,7 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <ShopContextProvider>
         <App />
-        <ToastContainer />
+        <ToastContainer autoClose={1000} />
       </ShopContextProvider>
     </BrowserRouter>
   </StrictMode>,

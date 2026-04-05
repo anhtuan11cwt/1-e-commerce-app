@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Orders from "./pages/Orders";
 import PlaceOrder from "./pages/PlaceOrder";
 import Product from "./pages/Product";
+import Verify from "./pages/Verify";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route element={<Login />} path="/login" />
         <Route element={<PlaceOrder />} path="/place-order" />
         <Route element={<Orders />} path="/orders" />
+        <Route element={<Verify />} path="/verify" />
       </Routes>
       <Footer />
     </div>
