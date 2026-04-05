@@ -2,12 +2,17 @@ import { stripe } from "../config/payment.js";
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 
-const delivery_fee = 10;
-
 export const placeOrder = async (req, res) => {
   try {
     const { items, amount, address } = req.body;
     const userId = req.userId;
+
+    if (!userId) {
+      return res.json({
+        message: "Không xác định được người dùng",
+        success: false,
+      });
+    }
 
     const orderData = {
       address,
@@ -51,22 +56,27 @@ export const placeOrderStripe = async (req, res) => {
     const newOrder = new orderModel(orderData);
     await newOrder.save();
 
-    const line_items = items.map((item) => ({
-      price_data: {
-        currency: "vnd",
-        product_data: {
-          name: item.name,
-        },
-        unit_amount: item.price,
-      },
-      quantity: item.quantity,
-    }));
+    const line_items = [];
+    for (const item of items) {
+      for (let i = 0; i < item.quantity; i++) {
+        line_items.push({
+          price_data: {
+            currency: "vnd",
+            product_data: {
+              name: `${item.name} - Size: ${item.size}`,
+            },
+            unit_amount: item.price,
+          },
+          quantity: 1,
+        });
+      }
+    }
 
     line_items.push({
       price_data: {
         currency: "vnd",
         product_data: { name: "Phí vận chuyển" },
-        unit_amount: delivery_fee,
+        unit_amount: 30000,
       },
       quantity: 1,
     });

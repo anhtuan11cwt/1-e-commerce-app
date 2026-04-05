@@ -14,7 +14,7 @@ const orderRouter = express.Router();
 
 orderRouter.post("/place", auth, placeOrder);
 orderRouter.post("/stripe", auth, placeOrderStripe);
-orderRouter.post("/userorders", auth, userOrders);
+orderRouter.get("/userorders", auth, userOrders);
 orderRouter.post("/verifyStripe", auth, verifyStripe);
 
 orderRouter.post("/list", adminAuth, allOrders);
