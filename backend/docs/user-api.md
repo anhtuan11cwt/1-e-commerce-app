@@ -96,7 +96,7 @@
 }
 ```
 
-  - 400 (thiếu trường):
+  - 400 (người dùng không tồn tại):
 
 ```json
 {
@@ -156,6 +156,6 @@
 ## Ghi chú chung
 
 - **JWT Token**: Trả về `token` trong body response khi đăng ký hoặc đăng nhập thành công. Token hết hạn sau 7 ngày.
-- **Xác thực**: Gửi token qua header `Authorization: Bearer {token}` cho các API cần xác thực.
+- **Xác thực**: Gửi token qua header `token: {token}` cho các API cần xác thực.
 - **Role mặc định**: `user` (người dùng thông thường), `admin` (quản trị viên).
 - **Admin credentials**: Được lấy từ biến môi trường `ADMIN_EMAIL` và `ADMIN_PASSWORD` trong file `.env`.

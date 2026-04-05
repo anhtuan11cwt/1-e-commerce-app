@@ -9,10 +9,10 @@
 
 - **Method**: POST
 - **URL**: `http://localhost:4000/api/cart/add`
-- **Authorization**: Có (Bearer Token)
+- **Authorization**: Có (User Token)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {token}`
+  - `token: {token}`
 - **Body** (raw JSON):
 
 ```json
@@ -41,16 +41,25 @@
 }
 ```
 
+  - 400 (người dùng không tồn tại):
+
+```json
+{
+  "message": "Người dùng không tồn tại",
+  "success": false
+}
+```
+
 ---
 
 ## 2. Cập nhật số lượng sản phẩm
 
 - **Method**: POST
 - **URL**: `http://localhost:4000/api/cart/update`
-- **Authorization**: Có (Bearer Token)
+- **Authorization**: Có (User Token)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {token}`
+  - `token: {token}`
 - **Body** (raw JSON):
 
 ```json
@@ -84,12 +93,12 @@
 
 ## 3. Lấy dữ liệu giỏ hàng
 
-- **Method**: POST
+- **Method**: GET
 - **URL**: `http://localhost:4000/api/cart/get`
-- **Authorization**: Có (Bearer Token)
+- **Authorization**: Có (User Token)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {token}`
+  - `token: {token}`
 - **Body**: Để trống (không cần)
 
 - **Response**:
@@ -145,6 +154,6 @@ Dữ liệu giỏ hàng được lưu theo cấu trúc:
 
 ## Ghi chú chung
 
-- **Xác thực**: Tất cả các API đều yêu cầu token xác thực qua header `Authorization: Bearer {token}`.
+- **Xác thực**: Tất cả các API đều yêu cầu token xác thực qua header `token: {token}`.
 - **userId**: Được tự động trích xuất từ token trong middleware `authUser`, không cần gửi trong body.
 - **Cơ sở dữ liệu**: Giỏ hàng được lưu trong trường `cartData` của User Model trong MongoDB.

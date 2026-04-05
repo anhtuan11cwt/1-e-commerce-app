@@ -9,10 +9,10 @@
 
 - **Method**: POST
 - **URL**: `http://localhost:4000/api/order/place`
-- **Authorization**: Có (Bearer Token)
+- **Authorization**: Có (User Token)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {token}`
+  - `token: {token}`
 - **Body** (raw JSON):
 
 ```json
@@ -66,10 +66,10 @@
 
 - **Method**: POST
 - **URL**: `http://localhost:4000/api/order/stripe`
-- **Authorization**: Có (Bearer Token)
+- **Authorization**: Có (User Token)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {token}`
+  - `token: {token}`
 - **Body** (raw JSON):
 
 ```json
@@ -123,10 +123,10 @@
 
 - **Method**: POST
 - **URL**: `http://localhost:4000/api/order/verifyStripe`
-- **Authorization**: Có (Bearer Token)
+- **Authorization**: Có (User Token)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {token}`
+  - `token: {token}`
 - **Body** (raw JSON):
 
 ```json
@@ -159,12 +159,12 @@
 
 ## 4. Lấy danh sách đơn hàng của người dùng
 
-- **Method**: POST
+- **Method**: GET
 - **URL**: `http://localhost:4000/api/order/userorders`
-- **Authorization**: Có (Bearer Token)
+- **Authorization**: Có (User Token)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {token}`
+  - `token: {token}`
 - **Body**: Để trống (không cần)
 
 - **Response**:
@@ -195,10 +195,10 @@
 
 - **Method**: POST
 - **URL**: `http://localhost:4000/api/order/list`
-- **Authorization**: Có (Admin Bearer Token)
+- **Authorization**: Có (Admin Token)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {admin_token}`
+  - `token: {admin_token}`
 - **Body**: Để trống (không cần)
 
 - **Response**:
@@ -217,10 +217,10 @@
 
 - **Method**: POST
 - **URL**: `http://localhost:4000/api/order/status`
-- **Authorization**: Có (Admin Bearer Token)
+- **Authorization**: Có (Admin Token)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {admin_token}`
+  - `token: {admin_token}`
 - **Body** (raw JSON):
 
 ```json
@@ -257,8 +257,8 @@
 ## Ghi chú chung
 
 - **Xác thực**: 
-  - User APIs yêu cầu token thường qua `Authorization: Bearer {token}`
-  - Admin APIs yêu cầu admin token qua `Authorization: Bearer {admin_token}`
+  - User APIs yêu cầu token thường qua header `token: {token}`
+  - Admin APIs yêu cầu admin token qua header `token: {admin_token}`
 - **userId**: Được tự động trích xuất từ token trong middleware, không cần gửi trong body
 - **Cơ sở dữ liệu**: Đơn hàng được lưu trong Order Model trong MongoDB
 - **Thanh toán**: 

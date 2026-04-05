@@ -12,7 +12,7 @@
 - **Authorization**: Có (Admin)
 - **Headers**:
   - `Content-Type: multipart/form-data`
-  - `Authorization: Bearer {token}`
+  - `token: {token}`
 - **Body** (multipart/form-data):
 
 | Field | Type | Required | Description |
@@ -65,6 +65,7 @@
 - **URL**: `http://localhost:4000/api/product/list`
 - **Authorization**: Không
 - **Headers**: Không
+- **Body**: Không cần
 
 - **Response**:
   - 200 (thành công):
@@ -107,7 +108,7 @@
 - **Authorization**: Có (Admin)
 - **Headers**:
   - `Content-Type: application/json`
-  - `Authorization: Bearer {token}`
+  - `token: {token}`
 - **Body** (raw JSON):
 
 ```json
@@ -126,7 +127,7 @@
 }
 ```
 
-  - 401 (chưa đăng nhập):
+  - 401 (chưa đăng nhập hoặc không phải admin):
 
 ```json
 {
@@ -197,6 +198,6 @@
 
 - **Upload ảnh**: Sử dụng `multer` để xử lý upload file, tối đa 4 ảnh (image1-image4).
 - **Cloudinary**: Ảnh được upload lên Cloudinary, lưu trữ `secure_url` vào database.
-- **Xác thực Admin**: API `/add` và `/remove` yêu cầu token admin. Gửi token qua header `Authorization: Bearer {token}`.
+- **Xác thực Admin**: API `/add` và `/remove` yêu cầu token admin. Gửi token qua header `token: {token}`.
 - **Sizes**: Gửi dưới dạng JSON string, VD: `["S","M","L","XL"]`, controller sẽ parse thành array.
 - **Bestseller**: Gửi dưới dạng string `"true"` hoặc `"false"`, controller tự chuyển sang boolean.
