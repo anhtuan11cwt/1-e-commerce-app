@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import connectCloudinary from "./config/cloudinary.js";
 import connectDB from "./config/mongodb.js";
+import cartRouter from "./routes/cartRoute.js";
 import productRouter from "./routes/productRoute.js";
 import userRouter from "./routes/userRoute.js";
 
@@ -16,6 +17,7 @@ app.use(cors());
 
 app.use("/api/user", userRouter);
 app.use("/api/product", productRouter);
+app.use("/api/cart", cartRouter);
 
 connectDB();
 connectCloudinary();
