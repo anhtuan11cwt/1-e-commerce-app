@@ -1,329 +1,196 @@
 # AGENTS.md - E-commerce App Development Guidelines
 
-This document provides guidelines for software engineering agents working on the full-stack e-commerce application. It includes build/lint/test commands, code style guidelines, and best practices to ensure consistency across the codebase.
-
 ## Project Structure
 
-The project consists of three main parts:
-- `frontend/`: React application (Vite + Tailwind CSS)
+- `frontend/`: React + Vite + Tailwind CSS v4
 - `backend/`: Node.js/Express API (planned)
 - `admin/`: React admin panel (planned)
 
 ## Build/Lint/Test Commands
 
-### Frontend (React + Vite)
+### Frontend
 
-**Development Server:**
 ```bash
-cd frontend && npm run dev
+cd frontend && npm run dev      # Dev server
+cd frontend && npm run build    # Production build
+cd frontend && npm run preview  # Preview
+cd frontend && npm run check    # Biome check (auto-fix)
+cd frontend && npm run check2   # Biome (unsafe fixes)
+cd frontend && npm run format   # Biome format only
+cd frontend && npm run lint     # ESLint (React Hooks, refresh)
 ```
 
-**Build for Production:**
+**Tests:** None configured. When adding Vitest/Jest:
+
 ```bash
-cd frontend && npm run build
+cd frontend && npm test                     # All tests
+cd frontend && npm test -- <file>.test.jsx  # Single file
+cd frontend && npm test -- -t "test name"   # Single test
 ```
 
-**Linting:**
-```bash
-cd frontend && npm run lint
-```
+### Backend & Admin (When Implemented)
 
-**Preview Built App:**
 ```bash
-cd frontend && npm run preview
-```
+cd backend && npm run server    # Dev server
+cd backend && npm run lint      # Lint
+cd backend && npm test          # All tests
+cd backend && npm test -- --grep "<name>"  # Single test
 
-**Running Tests:**
-No test framework configured yet. When added, use:
-```bash
-cd frontend && npm test
-```
-For running a single test file (when Jest/Vitest is set up):
-```bash
-cd frontend && npm test -- <test-file>.test.js
-```
-
-### Backend (Node.js + Express) - When Implemented
-
-**Development Server:**
-```bash
-cd backend && npm run server
-```
-
-**Linting:**
-```bash
-cd backend && npm run lint
-```
-
-**Running Tests:**
-```bash
-cd backend && npm test
-```
-For running a single test:
-```bash
-cd backend && npm test -- --grep "<test-name>"
-```
-
-### Admin Panel (React) - When Implemented
-
-**Development Server:**
-```bash
-cd admin && npm run dev
-```
-
-**Build:**
-```bash
-cd admin && npm run build
-```
-
-**Linting:**
-```bash
-cd admin && npm run lint
+cd admin && npm run dev    # Dev server
+cd admin && npm run build  # Build
+cd admin && npm run lint   # Lint
 ```
 
 ## Code Style Guidelines
 
-### General Principles
+### General
 
-- **Language:** JavaScript (ES6+), no TypeScript unless explicitly added
-- **Consistency:** Follow existing patterns in the codebase
-- **Readability:** Prioritize clean, readable code over clever optimizations
-- **DRY Principle:** Avoid code duplication, extract reusable functions/components
+- **Language:** JavaScript (ES6+), ES modules
+- **Consistency:** Follow existing patterns; clean, readable code
+- **DRY:** Extract reusable functions/components
 
 ### Naming Conventions
 
-- **Variables/Functions:** camelCase (e.g., `getUserCart`, `cartItems`)
-- **Components:** PascalCase (e.g., `ProductItem`, `Navbar`)
-- **Files:** PascalCase for components (e.g., `ProductItem.jsx`), camelCase for utilities (e.g., `apiUtils.js`)
-- **Constants:** UPPER_SNAKE_CASE for global constants (e.g., `CURRENCY = '$'`)
-- **Directories:** lowercase with hyphens if needed (e.g., `src/components`, `src/pages`)
+- **Variables/Functions:** camelCase (`getUserCart`, `cartItems`)
+- **Components:** PascalCase (`ProductItem`, `Navbar`)
+- **Files:** PascalCase for components, camelCase for utilities
+- **Constants:** UPPER_SNAKE_CASE (`CURRENCY = '₫'`)
+- **Directories:** lowercase (`src/components`, `src/pages`)
 
 ### Component Structure
 
-- Use arrow function components with `rafc` snippet:
-```javascript
-const ComponentName = () => {
-  return (
-    <div>
-      {/* JSX */}
-    </div>
-  );
-};
+Arrow function components with hooks:
 
+```javascript
+const ComponentName = ({ prop1, prop2 }) => {
+  const [state, setState] = useState(initialValue);
+  useEffect(() => { /* side effects */ }, [dependencies]);
+  return (<div>{/* JSX */}</div>);
+};
 export default ComponentName;
 ```
 
-- **Props:** Destructure props in function parameters:
-```javascript
-const ProductItem = ({ id, image, name, price }) => {
-  // component logic
-};
-```
-
-- **State:** Use `useState` hook:
-```javascript
-const [state, setState] = useState(initialValue);
-```
-
-- **Effects:** Use `useEffect` for side effects:
-```javascript
-useEffect(() => {
-  // effect logic
-}, [dependencies]);
-```
+- **Props:** Destructure parameters; **State:** `useState`
+- **Effects:** `useEffect` with exhaustive dependencies
+- **Memoization:** `useCallback` for functions, `useMemo` for calculations
+- **Context:** `useContext(ShopContext)` for global state
 
 ### Imports and Exports
 
-- **Default Imports:** Use for components and main exports:
-```javascript
-import React from 'react';
-import ComponentName from './ComponentName';
-```
+**Group imports in order:**
+1. React imports
+2. Third-party libraries
+3. Local imports (parent to child)
 
-- **Named Imports:** Use for utilities and multiple exports:
 ```javascript
-import { useState, useEffect } from 'react';
-import { getProductsData } from '../context/ShopContext';
-```
-
-- **Group Imports:** Group related imports together:
-```javascript
-// React imports
 import React, { useState } from 'react';
-
-// Third-party libraries
-import axios from 'axios';
-
-// Local imports
-import { assets } from '../assets/assets';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShopContext } from '../context/ShopContext';
 import ProductItem from './ProductItem';
-```
-
-- **Export:** Use default export for components:
-```javascript
 export default ComponentName;
 ```
 
-### Styling (Tailwind CSS)
+### Styling (Tailwind CSS v4)
 
-- **Class Ordering:** Group related classes logically:
-  - Layout (display, position, flex/grid)
-  - Spacing (margin, padding)
-  - Typography (font, text)
-  - Visual (colors, borders, shadows)
-  - Responsive (sm:, md:, lg:)
-
-- **Responsive Design:** Use Tailwind responsive prefixes:
-```jsx
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-```
-
-- **Custom Classes:** Avoid inline styles, use Tailwind utilities or custom CSS in `index.css`
+- **Order:** Layout → Spacing → Typography → Visual → Responsive
+- **Responsive:** Use `sm:`, `md:`, `lg:` prefixes
+- **No inline styles:** Use Tailwind utilities or `index.css`
 
 ### API Integration
 
-- **HTTP Client:** Use Axios for API calls:
-```javascript
-import axios from 'axios';
-
-const response = await axios.get(`${backendURL}/api/products`);
-```
-
-- **Error Handling:** Use try-catch blocks and toast notifications:
-```javascript
-try {
-  const response = await axios.post('/api/login', data);
-  // success handling
-} catch (error) {
-  console.error('Login error:', error);
-  toast.error(error.response?.data?.message || 'Login failed');
-}
-```
-
-- **Headers:** Include auth tokens when required:
-```javascript
-const headers = { token };
-const response = await axios.post('/api/cart/add', data, { headers });
-```
+- **HTTP client:** Axios with async/await
+- **Base URL:** `import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'`
+- **Error handling:** try-catch → `console.error()` + `toast.error()`
+- **Auth:** `{ headers: { token } }`
+- **Fallback data:** Local products if backend unavailable
 
 ### State Management (Context API)
 
-- **Context Structure:** Use `ShopContext` for global state:
-```javascript
-// Provider setup
-<ShopContextProvider>
-  <App />
-</ShopContextProvider>
-
-// Consumer usage
-const { products, cartItems, addToCart } = useContext(ShopContext);
-```
-
-- **Context Functions:** Follow naming patterns like `addToCart`, `getCartCount`
+- `ShopContextProvider` wraps `<App />` in `main.jsx`
+- Expose functions (not setters): `addToCart`, `getCartCount`
+- Token stored in `localStorage`
 
 ### File Organization
 
-- **Pages:** `src/pages/` - Route components (Home, Collection, etc.)
-- **Components:** `src/components/` - Reusable UI components (Navbar, Footer, etc.)
-- **Context:** `src/context/` - State management (ShopContext)
-- **Assets:** `src/assets/` - Images, icons, constants
+- `src/pages/` - Route components (Home, Cart, Product, etc.)
+- `src/components/` - Reusable UI (Navbar, Footer, ProductItem)
+- `src/context/` - State (`ShopContext.jsx`)
+- `src/assets/` - Images and constants
 
-### Routing
+### Routing (React Router v7)
 
-- **React Router:** Use `react-router-dom`:
 ```javascript
-import { Routes, Route } from 'react-router-dom';
-
+import { Routes, Route, useNavigate } from 'react-router-dom';
 <Routes>
   <Route path="/" element={<Home />} />
   <Route path="/product/:productId" element={<Product />} />
 </Routes>
-```
-
-- **Navigation:** Use `useNavigate` hook:
-```javascript
 const navigate = useNavigate();
 navigate('/cart');
 ```
 
 ### Forms and Validation
 
-- **Controlled Inputs:** Use state for form values:
-```javascript
-const [email, setEmail] = useState('');
-
-<input
-  type="email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  required
-/>
-```
-
-- **Form Submission:** Prevent default and handle async:
-```javascript
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  // form logic
-};
-```
+- **Controlled inputs:** `value` + `onChange`
+- **Validation:** HTML5 attributes + custom checks
+- **Submit:** `e.preventDefault()`; handle async with loading states
+- **Feedback:** `react-toastify` for success/error messages
 
 ### Error Handling
 
-- **API Errors:** Display user-friendly messages via toast
-- **Validation Errors:** Use HTML5 validation + custom checks
-- **Loading States:** Show loading indicators during async operations
-
-### Performance
-
-- **Memoization:** Use `useMemo` for expensive calculations:
-```javascript
-const filteredProducts = useMemo(() => {
-  return products.filter(/* logic */);
-}, [products, searchTerm]);
-```
-
-- **Lazy Loading:** Implement for routes if app grows large
+- API errors → `console.error()` + `toast.error()`
+- Check truthiness for missing data (`itemInfo && ...`)
+- Show loading indicators during async operations
+- Graceful degradation (fallbacks when unavailable)
 
 ### Security
 
-- **Environment Variables:** Store sensitive data in `.env` files
-- **Input Validation:** Validate all user inputs on both client and server
-- **Auth Tokens:** Store in localStorage, include in API requests
+- **Environment:** `import.meta.env.VITE_*` prefix
+- **Validation:** Client and server
+- **Tokens:** `localStorage` + request headers
+- **Sanitization:** Not yet implemented
 
 ### Git and Version Control
 
-- **Commit Messages:** Use descriptive, imperative mood:
-  - "Add user authentication"
-  - "Fix cart calculation bug"
-  - "Update product display component"
-
-- **Branching:** Use feature branches for new functionality
+- **Commit messages:** Imperative and descriptive ("Add user auth", "Fix cart bug")
+- **Branching:** Feature branches (`feature/xyz`) → PRs
 
 ### Testing (When Implemented)
 
-- **Unit Tests:** Test individual functions and components
-- **Integration Tests:** Test API endpoints and user flows
-- **E2E Tests:** Test complete user journeys
+- **Unit:** Test individual functions and components
+- **Integration:** API endpoints and user flows
+- **E2E:** Complete user journeys (checkout, auth)
+- **Coverage:** Aim for 80%+ on critical paths
 
-### Deployment
+### Performance
 
-- **Frontend:** Vercel (configured via `vercel.json`)
-- **Backend:** Vercel serverless functions
-- **Admin:** Vercel static site
+- **Memoization:** `useMemo` for lists, `useCallback` for handlers
+- **Lazy loading:** `lazy()` + `Suspense` for routes
+- **Images:** Optimize in `assets.js`; consider WebP
+- **Bundle:** Monitor with `vite build`; avoid bloat
 
 ### Best Practices
 
-- **Code Reviews:** Always review code changes
-- **Documentation:** Update this file as conventions evolve
-- **Accessibility:** Use semantic HTML, alt text for images
-- **Mobile-First:** Design for mobile, enhance for desktop
-- **Performance:** Optimize images, minimize bundle size
+- **Code reviews** required before merging
+- **Update this file** as conventions evolve
+- **Accessibility:** Semantic HTML, `alt` attributes, ARIA labels
+- **Mobile-first** design, responsive images
+- **Run `npm run check`** before committing
+
+### Tooling Configuration
+
+- **Biome (`biome.json`):** Import organization, sorting, linting
+- **ESLint (`eslint.config.js`):** React Hooks, Vite refresh
+- **Vite (`vite.config.js`):** React + Tailwind plugins
+- **No Prettier:** Biome handles formatting
+
+## Cursor/Copilot Instructions
+
+No `.cursorrules` or `.github/copilot-instructions.md` found. Follow this AGENTS.md for all guidelines.
 
 ## Getting Help
 
-- Use `/help` for Kilo CLI assistance
-- Report issues at https://github.com/Kilo-Org/kilocode/issues
-- For feedback, contact the development team
+- `/help` for Kilo CLI assistance
+- Report issues: https://github.com/Kilo-Org/kilocode/issues
 
-This document will be updated as the project evolves and new tools/frameworks are added.
+This document will be updated as the project evolves.
