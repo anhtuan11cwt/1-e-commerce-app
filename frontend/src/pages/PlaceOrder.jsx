@@ -41,26 +41,31 @@ const PlaceOrder = () => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-    setLoading(true);
 
-    try {
-      const orderItems = [];
-
-      for (const itemId in cartItems) {
-        for (const size in cartItems[itemId]) {
-          if (cartItems[itemId][size] > 0) {
-            const product = products.find((p) => p._id === itemId);
-            if (product) {
-              orderItems.push({
-                ...product,
-                quantity: cartItems[itemId][size],
-                size,
-              });
-            }
+    const orderItems = [];
+    for (const itemId in cartItems) {
+      for (const size in cartItems[itemId]) {
+        if (cartItems[itemId][size] > 0) {
+          const product = products.find((p) => p._id === itemId);
+          if (product) {
+            orderItems.push({
+              ...product,
+              quantity: cartItems[itemId][size],
+              size,
+            });
           }
         }
       }
+    }
 
+    if (orderItems.length === 0) {
+      toast.error("Giỏ hàng trống!");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
       const orderData = {
         address: formData,
         amount: getCartAmount() + deliveryFee,
@@ -77,16 +82,22 @@ const PlaceOrder = () => {
             );
             if (response.data.success) {
               setCartItems({});
+              localStorage.setItem("cartItems", JSON.stringify({}));
               navigate("/orders");
               toast.success("Đặt hàng thành công!");
+            } else {
+              toast.error(response.data.message || "Đặt hàng thất bại");
             }
-          } else {
-            console.log("COD Order (demo):", orderData);
-            setCartItems({});
-            navigate("/orders");
-            toast.success("Đặt hàng thành công!");
+            setLoading(false);
+            return;
           }
-          break;
+          console.log("COD Order (demo):", orderData);
+          setCartItems({});
+          localStorage.setItem("cartItems", JSON.stringify({}));
+          navigate("/orders");
+          toast.success("Đặt hàng thành công!");
+          setLoading(false);
+          return;
 
         case "stripe":
           if (token) {
@@ -95,16 +106,18 @@ const PlaceOrder = () => {
               orderData,
               { headers: { token } },
             );
-            if (response.data.success) {
-              window.location.replace(response.data.url);
+            if (response.data.success && response.data.session_url) {
+              window.location.replace(response.data.session_url);
+              return;
             }
           } else {
             const response = await axios.post(
               `${backendURL}/api/order/stripe`,
               orderData,
             );
-            if (response.data.success) {
-              window.location.replace(response.data.url);
+            if (response.data.success && response.data.session_url) {
+              window.location.replace(response.data.session_url);
+              return;
             }
           }
           break;

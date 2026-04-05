@@ -29,9 +29,11 @@ const Login = () => {
         });
 
         if (response.data.success) {
-          setToken(response.data.token);
-          localStorage.setItem("token", response.data.token);
-          toast.success("Đăng ký thành công!");
+          toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
+          setName("");
+          setEmail("");
+          setPassword("");
+          setCurrentState("Login");
         }
       } else {
         const response = await axios.post(`${backendURL}/api/user/login`, {
@@ -43,6 +45,7 @@ const Login = () => {
           setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
           toast.success("Đăng nhập thành công!");
+          setTimeout(() => (window.location.href = "/"), 1000);
         }
       }
     } catch (error) {
