@@ -3,6 +3,7 @@ import axios from "axios";
 import { createContext, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { products as localProducts } from "../assets/assets";
 
 export const ShopContext = createContext();
 
@@ -115,8 +116,9 @@ const ShopContextProvider = (props) => {
       if (response.data.success) {
         setProducts(response.data.products);
       }
-    } catch (error) {
-      console.log(error);
+    } catch {
+      console.log("Using local products (backend unavailable)");
+      setProducts(localProducts);
     }
   }, []);
 
