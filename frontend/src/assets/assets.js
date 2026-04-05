@@ -65,7 +65,7 @@ import p_img51 from "./p_img51.png";
 import p_img52 from "./p_img52.png";
 import profile_icon from "./profile_icon.png";
 import quality_icon from "./quality_icon.png";
-import razorpay_logo from "./razorpay_logo.png";
+
 import search_icon from "./search_icon.png";
 import star_dull_icon from "./star_dull_icon.png";
 import star_icon from "./star_icon.png";
@@ -85,7 +85,6 @@ export const assets = {
   menu_icon,
   profile_icon,
   quality_icon,
-  razorpay_logo,
   search_icon,
   star_dull_icon,
   star_icon,
