@@ -1,4 +1,5 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+
 import About from "./pages/About";
 import Cart from "./pages/Cart";
 import Collection from "./pages/Collection";
@@ -11,19 +12,19 @@ import Product from "./pages/Product";
 
 function App() {
   return (
-    <BrowserRouter>
+    <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
       <Routes>
         <Route element={<Home />} path="/" />
         <Route element={<Collection />} path="/collection" />
         <Route element={<About />} path="/about" />
         <Route element={<Contact />} path="/contact" />
-        <Route element={<Product />} path="/product/:id" />
+        <Route element={<Product />} path="/product/:productId" />
         <Route element={<Cart />} path="/cart" />
         <Route element={<Login />} path="/login" />
         <Route element={<PlaceOrder />} path="/place-order" />
         <Route element={<Orders />} path="/orders" />
       </Routes>
-    </BrowserRouter>
+    </div>
   );
 }
 
