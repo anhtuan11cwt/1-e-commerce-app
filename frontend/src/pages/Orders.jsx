@@ -46,18 +46,18 @@ const Orders = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Delivered":
+      case "Đã giao thành công":
         return "bg-green-500";
       case "Pending":
-      case "Order Placed":
+      case "Đã đặt hàng":
         return "bg-yellow-500";
       case "Cancelled":
         return "bg-red-500";
-      case "Packing":
+      case "Đang đóng gói":
         return "bg-yellow-500";
-      case "Shipped":
+      case "Đang giao hàng":
         return "bg-blue-500";
-      case "Out for delivery":
+      case "Đã giao hàng":
         return "bg-blue-500";
       default:
         return "bg-gray-500";
@@ -66,20 +66,20 @@ const Orders = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case "Delivered":
-        return "Đã giao";
+      case "Đã giao thành công":
+        return "Đã giao thành công";
       case "Pending":
         return "Chờ xử lý";
-      case "Order Placed":
-        return "Đã đặt";
+      case "Đã đặt hàng":
+        return "Đã đặt hàng";
       case "Cancelled":
         return "Đã hủy";
-      case "Packing":
-        return "Đóng gói";
-      case "Shipped":
-        return "Đang giao";
-      case "Out for delivery":
-        return "Đang vận chuyển";
+      case "Đang đóng gói":
+        return "Đang đóng gói";
+      case "Đang giao hàng":
+        return "Đang giao hàng";
+      case "Đã giao hàng":
+        return "Đã giao hàng";
       default:
         return status;
     }
@@ -134,6 +134,7 @@ const Orders = () => {
                       {item.paymentMethod === "COD"
                         ? "Tiền mặt"
                         : item.paymentMethod}
+                      {item.payment ? " - Đã thanh toán" : " - Chờ thanh toán"}
                     </span>
                   </p>
                 </div>
@@ -146,7 +147,7 @@ const Orders = () => {
                       item.status,
                     )}`}
                   />
-                  <p className="text-sm md:text-base">
+                  <p className="text-sm md:text-base font-medium">
                     {getStatusText(item.status)}
                   </p>
                 </div>

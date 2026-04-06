@@ -14,6 +14,9 @@ const Verify = () => {
       const success = searchParams.get("success");
       const orderId = searchParams.get("orderId");
 
+      console.log("Verify - success:", success, "orderId:", orderId);
+      console.log("Verify - token:", token);
+
       if (!orderId) {
         setStatus("Đơn hàng không hợp lệ");
         setTimeout(() => navigate("/cart"), 2000);
@@ -27,6 +30,8 @@ const Verify = () => {
           { headers: { token } },
         );
 
+        console.log("Verify response:", response.data);
+
         if (response.data.success) {
           setCartItems({});
           setStatus("Thanh toán thành công!");
@@ -36,7 +41,7 @@ const Verify = () => {
           setTimeout(() => navigate("/cart"), 2000);
         }
       } catch (error) {
-        console.log(error);
+        console.log("Verify error:", error);
         setStatus("Lỗi xác minh");
         setTimeout(() => navigate("/cart"), 2000);
       }

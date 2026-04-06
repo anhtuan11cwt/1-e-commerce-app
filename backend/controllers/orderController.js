@@ -21,7 +21,7 @@ export const placeOrder = async (req, res) => {
       items,
       payment: false,
       paymentMethod: "COD",
-      status: "Đơn hàng đã đặt",
+      status: "Đã đặt hàng",
       userId,
     };
 
@@ -49,7 +49,7 @@ export const placeOrderStripe = async (req, res) => {
       items,
       payment: false,
       paymentMethod: "Stripe",
-      status: "Đang chờ",
+      status: "Đã đặt hàng",
       userId,
     };
 
@@ -100,9 +100,11 @@ export const verifyStripe = async (req, res) => {
     const { success, orderId } = req.body;
     const userId = req.userId;
 
-    if (success === "true") {
+    if (success === "true" || success === true) {
       await orderModel.findByIdAndUpdate(orderId, { payment: true });
-      await userModel.findByIdAndUpdate(userId, { cartData: {} });
+      if (userId) {
+        await userModel.findByIdAndUpdate(userId, { cartData: {} });
+      }
 
       res.json({ message: "Thanh toán thành công", success: true });
     } else {
@@ -111,6 +113,7 @@ export const verifyStripe = async (req, res) => {
       res.json({ message: "Thanh toán thất bại", success: false });
     }
   } catch (error) {
+    console.log("Verify Stripe Error:", error);
     res.json({ message: error.message, success: false });
   }
 };
