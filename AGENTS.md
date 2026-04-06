@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-- `frontend/`: React + Vite + Tailwind CSS v4
+- `frontend/`: React + Vite + Tailwind CSS v4 + React Router v7
 - `backend/`: Node.js/Express API with MongoDB
 - `admin/`: React admin panel (planned)
 
@@ -11,25 +11,35 @@
 ### Frontend
 
 ```bash
-cd frontend && npm run dev      # Dev server
+cd frontend && npm run dev      # Dev server (http://localhost:5173)
 cd frontend && npm run build    # Production build
 cd frontend && npm run preview  # Preview production build
 cd frontend && npm run check    # Biome check (auto-fix)
-cd frontend && npm run check2   # Biome (unsafe fixes)
-cd frontend && npm run format   # Biome format only
-cd frontend && npm run lint     # ESLint (React Hooks, refresh)
+cd frontend && npm run check2   # Biome check (unsafe fixes)
+cd frontend && npm run lint2    # Biome lint (auto-fix)
+cd frontend && npm run format  # Biome format only
+cd frontend && npm run lint    # ESLint (React Hooks, refresh)
 ```
 
 ### Backend
 
 ```bash
-cd backend && npm run server    # Dev server (nodemon)
-cd backend && npm run start     # Production server
-cd backend && npm run check     # Biome check (auto-fix)
-cd backend && npm run check2    # Biome (unsafe fixes)
-cd backend && npm run format    # Biome format only
-cd backend && npm run lint      # ESLint
-cd backend && npm test          # Tests (when implemented)
+cd backend && npm run server   # Dev server (nodemon, port 4000)
+cd backend && npm run start    # Production server
+cd backend && npm run check    # Biome check (auto-fix)
+cd backend && npm run check2   # Biome check (unsafe fixes)
+cd backend && npm run lint2    # Biome lint (auto-fix)
+cd backend && npm run format   # Biome format only
+cd backend && npm run lint     # ESLint
+# cd backend && npm test       # No tests configured yet
+```
+
+### Running a Single Test
+
+When tests are added, run with:
+```bash
+npm test              # Run all tests
+npm test -- --testNamePattern="pattern"  # Run matching tests
 ```
 
 ## Code Style Guidelines
@@ -37,33 +47,22 @@ cd backend && npm test          # Tests (when implemented)
 ### General
 
 - **Language:** JavaScript (ES6+), ES modules
-- **Consistency:** Follow existing patterns; clean, readable code
+- **Consistency:** Follow existing patterns, clean readable code
 - **DRY:** Extract reusable functions/components
 
 ### Naming Conventions
 
-- **Variables/Functions:** camelCase (`getUserCart`, `cartItems`)
-- **Components:** PascalCase (`ProductItem`, `Navbar`)
-- **Files:** PascalCase for components, camelCase for utilities
-- **Constants:** UPPER_SNAKE_CASE (`CURRENCY = '₫'`)
-- **Directories:** lowercase (`src/components`, `src/pages`)
+| Type | Convention | Example |
+|------|------------|---------|
+| Variables/Functions | camelCase | `getUserCart`, `cartItems` |
+| Components | PascalCase | `ProductItem`, `Navbar` |
+| Components (files) | PascalCase | `ProductItem.jsx` |
+| Utilities | camelCase | `apiClient.js` |
+| Constants | UPPER_SNAKE_CASE | `CURRENCY = '₫'` |
+| Directories | lowercase | `src/components` |
 
-### Component Structure (Frontend)
+### Imports (Grouped Order)
 
-Arrow function components with hooks:
-
-```javascript
-const ComponentName = ({ prop1, prop2 }) => {
-  const [state, setState] = useState(initialValue);
-  useEffect(() => { /* side effects */ }, [dependencies]);
-  return (<div>{/* JSX */}</div>);
-};
-export default ComponentName;
-```
-
-### Imports and Exports
-
-**Group imports in order:**
 1. React imports
 2. Third-party libraries
 3. Local imports (parent to child)
@@ -76,50 +75,41 @@ import ProductItem from './ProductItem';
 export default ComponentName;
 ```
 
-### Styling (Tailwind CSS v4)
+### Component Structure
 
-- **Order:** Layout → Spacing → Typography → Visual → Responsive
-- **Responsive:** Use `sm:`, `md:`, `lg:` prefixes
-- **No inline styles:** Use Tailwind utilities
-
-### API Integration (Frontend)
-
-- **HTTP client:** Axios with async/await
-- **Base URL:** `import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'`
-- **Error handling:** try-catch → `console.error()` + `toast.error()`
-- **Auth:** `{ headers: { token } }`
-- **Fallback data:** Local products when backend unavailable
-
-### State Management (Context API)
-
-- `ShopContextProvider` wraps `<App />` in `main.jsx`
-- Expose functions (not setters): `addToCart`, `getCartCount`
-- Token stored in `localStorage`
+```javascript
+const ComponentName = ({ prop1, prop2 }) => {
+  const [state, setState] = useState(initialValue);
+  useEffect(() => { /* side effects */ }, [dependencies]);
+  return (<div>{/* JSX */}</div>);
+};
+export default ComponentName;
+```
 
 ### Backend Code Style
 
-- **Framework:** Express.js with ES modules
-- **Database:** MongoDB with Mongoose
-- **Authentication:** JWT tokens
-- **File uploads:** Multer + Cloudinary
-- **Error handling:** try-catch blocks, proper HTTP status codes
-- **Middleware:** CORS, authentication, file upload validation
+- **Framework:** Express.js with ES modules (import/export)
+- **Database:** MongoDB with Mongoose schemas
+- **Error handling:** try-catch blocks, proper HTTP status codes (200, 400, 401, 500)
+- **Response format:** `{ success: true, message: "..." }` or `{ success: false, message: "..." }`
+- **Authentication:** JWT tokens in `Authorization: Bearer <token>` header
 
 ### File Organization
 
-#### Frontend
-- `src/pages/` - Route components (Home, Cart, Product, etc.)
-- `src/components/` - Reusable UI (Navbar, Footer, ProductItem)
-- `src/context/` - State (`ShopContext.jsx`)
-- `src/assets/` - Images and constants
+```
+frontend/src/
+  pages/         # Route components (Home, Cart, Product)
+  components/   # Reusable UI (Navbar, Footer, ProductItem)
+  context/      # State (ShopContext.jsx)
+  assets/       # Images, constants
 
-#### Backend
-- `controllers/` - Route handlers
-- `models/` - Mongoose schemas
-- `routes/` - Express routes
-- `middleware/` - Custom middleware
-- `config/` - Database, cloudinary, etc.
-- `docs/` - API documentation
+backend/
+  controllers/  # Route handlers
+  models/        # Mongoose schemas
+  routes/        # Express routes
+  middleware/   # auth.js, adminAuth.js, multer.js
+  config/       # Database, cloudinary config
+```
 
 ### Routing (React Router v7)
 
@@ -130,8 +120,37 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
   <Route path="/product/:productId" element={<Product />} />
 </Routes>
 const navigate = useNavigate();
-navigate('/cart');
 ```
+
+### Styling (Tailwind CSS v4)
+
+- **Order:** Layout → Spacing → Typography → Visual → Responsive
+- **Responsive prefixes:** `sm:`, `md:`, `lg:`, `xl:`
+- **Layout container:** `px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]`
+- **Grid:** `grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5`
+- No inline styles or custom CSS classes
+
+### API Integration (Frontend)
+
+- **HTTP client:** Axios with async/await
+- **Base URL:** `import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'`
+- **Auth headers:** `{ headers: { token } }`
+- **Error handling:** try-catch → `console.error()` + `toast.error()`
+- **Fallback:** Show local products when backend unavailable
+
+### State Management (Context API)
+
+- `ShopContextProvider` wraps `<App />` in `main.jsx`
+- Expose functions (not setters): `addToCart`, `getCartCount`, `getCartAmount`
+- Token stored in `localStorage`
+
+### Error Handling
+
+- **Frontend:** API errors → `console.error()` + `toast.error()`
+- **Backend:** Return `{ success: false, message: "..." }` with proper status codes
+- **Check truthiness:** `itemInfo && ...`
+- **Loading states:** Show indicators during async operations
+- **Graceful degradation:** Fallbacks when backend unavailable
 
 ### Forms and Validation
 
@@ -140,42 +159,38 @@ navigate('/cart');
 - **Submit:** `e.preventDefault()`; handle async with loading states
 - **Feedback:** `react-toastify` for success/error messages
 
-### Error Handling
-
-- **Frontend:** API errors → `console.error()` + `toast.error()`
-- **Backend:** Proper HTTP status codes, error messages
-- **Check truthiness:** `itemInfo && ...`
-- **Loading states:** Show indicators during async operations
-- **Graceful degradation:** Fallbacks when backend unavailable
-
 ### Security
 
-- **Environment:** `VITE_*` (frontend), `.env` (backend)
-- **Validation:** Client and server-side
+- **Frontend env:** Prefix with `VITE_` to expose to client
+- **Backend env:** `.env` file (never commit)
 - **Tokens:** `localStorage` + request headers
-- **Passwords:** bcrypt hashing
-- **File uploads:** Type validation, size limits
+- **Passwords:** bcrypt hashing (salt rounds: 10)
+- **File uploads:** Type validation, size limits via Multer
 
 ### Git and Version Control
 
-- **Commit messages:** Imperative and descriptive ("Add user auth", "Fix cart bug")
-- **Branching:** Feature branches (`feature/xyz`) → PRs
+- **Commits:** Imperative messages ("Add user auth", "Fix cart bug")
+- **Branching:** Feature branches (`feature/xyz`)
 - **Pre-commit:** Run `npm run check` before committing
+- **Never commit:** `.env`, credentials, secrets
 
 ### Testing
 
-- **Frontend:** Vitest/Jest (when implemented)
-- **Backend:** Jest/Supertest (when implemented)
+Tests not yet configured. When adding:
+- **Frontend:** Vitest/Jest - run with `npm test`
+- **Backend:** Jest/Supertest
 - **Coverage:** Aim for 80%+ on critical paths
 
-### Tooling Configuration
+### Tooling
 
-- **Biome:** Import organization, sorting, linting (both frontend/backend)
-- **ESLint:** React Hooks, Vite refresh (frontend); Node.js (backend)
-- **Vite:** React + Tailwind plugins
-- **No Prettier:** Biome handles formatting
+| Tool | Purpose |
+|------|---------|
+| Biome | Formatting, import sorting, linting |
+| ESLint | React Hooks (frontend), Node.js (backend) |
+| Vite | React + Tailwind plugins |
+| No Prettier | Biome handles all formatting |
 
-## Cursor/Copilot Instructions
+### Cursor/Copilot Instructions
 
 No `.cursorrules` or `.github/copilot-instructions.md` found. Follow this AGENTS.md for all guidelines.
 
@@ -184,5 +199,4 @@ No `.cursorrules` or `.github/copilot-instructions.md` found. Follow this AGENTS
 - `/help` for Kilo CLI assistance
 - Report issues: https://github.com/Kilo-Org/kilocode/issues
 
-This document will be updated as the project evolves.</content>
-<parameter name="filePath">E:\GreatStack\1-e-commerce-app\AGENTS.md
+This document will be updated as the project evolves.

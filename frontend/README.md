@@ -39,6 +39,7 @@ frontend/
 │   ├── components/      # Components tái sử dụng
 │   │   ├── Navbar.jsx   # Navigation bar
 │   │   ├── Footer.jsx   # Footer
+│   │   ├── SearchBar.jsx # Thanh tìm kiếm
 │   │   ├── ProductItem.jsx # Card sản phẩm
 │   │   ├── CartTotal.jsx # Tính tổng giỏ hàng
 │   │   └── ...
@@ -49,8 +50,12 @@ frontend/
 │   │   ├── Collection.jsx # Danh sách sản phẩm
 │   │   ├── Product.jsx  # Chi tiết sản phẩm
 │   │   ├── Cart.jsx     # Giỏ hàng
-│   │   ├── Login.jsx    # Đăng nhập
-│   │   └── ...
+│   │   ├── Login.jsx    # Đăng nhập/đăng ký
+│   │   ├── PlaceOrder.jsx # Thanh toán
+│   │   ├── Orders.jsx   # Lịch sử đơn hàng
+│   │   ├── About.jsx    # Giới thiệu
+│   │   ├── Contact.jsx  # Liên hệ
+│   │   └── Verify.jsx   # Xác nhận thanh toán
 │   ├── App.jsx          # Main app component
 │   ├── main.jsx         # Entry point
 │   └── index.css        # Global styles
@@ -104,6 +109,23 @@ npm run preview
 - `npm run format` - Chỉ format code
 - `npm run lint` - Lint code với ESLint
 
+## Routes
+
+Sử dụng React Router v7:
+
+| Path | Component | Mô tả |
+|------|-----------|-------|
+| `/` | Home | Trang chủ |
+| `/collection` | Collection | Danh sách sản phẩm |
+| `/about` | About | Giới thiệu |
+| `/contact` | Contact | Liên hệ |
+| `/product/:productId` | Product | Chi tiết sản phẩm |
+| `/cart` | Cart | Giỏ hàng |
+| `/login` | Login | Đăng nhập/đăng ký |
+| `/place-order` | PlaceOrder | Thanh toán |
+| `/orders` | Orders | Lịch sử đơn hàng |
+| `/verify` | Verify | Xác nhận thanh toán Stripe |
+
 ## State Management
 
 ### ShopContext
@@ -120,6 +142,7 @@ Quản lý toàn bộ state của ứng dụng:
 - `getCartCount()`: Tính tổng số lượng trong giỏ
 - `getCartAmount()`: Tính tổng tiền giỏ hàng
 - `getProductsData()`: Fetch sản phẩm từ backend
+- `navigate(path)`: Điều hướng
 
 ## API Integration
 
@@ -131,25 +154,11 @@ Quản lý toàn bộ state của ứng dụng:
 ### Fallback mechanism
 Khi backend không khả dụng, ứng dụng tự động hiển thị sản phẩm từ `assets.js`
 
-## Routing
-
-Sử dụng React Router v7:
-
-```javascript
-<Route path="/" element={<Home />} />
-<Route path="/collection" element={<Collection />} />
-<Route path="/product/:productId" element={<Product />} />
-<Route path="/cart" element={<Cart />} />
-<Route path="/login" element={<Login />} />
-<Route path="/place-order" element={<PlaceOrder />} />
-<Route path="/orders" element={<Orders />} />
-```
-
 ## Components
 
 ### Layout Components
 - **Navbar**: Logo, menu, search bar, cart icon, user menu
-- **Footer**: Links, contact info, newsletter signup
+- **Footer**: Links, contact info
 - **SearchBar**: Tìm kiếm realtime với debounce
 
 ### Product Components

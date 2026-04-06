@@ -13,6 +13,11 @@ Một ứng dụng thương mại điện tử đầy đủ chức năng đượ
 - **Đơn hàng**: Xem lịch sử đơn hàng và trạng thái
 - **Responsive**: Tương thích với mobile và desktop
 
+### Admin Panel (React + Vite)
+- **Quản lý sản phẩm**: Thêm, xóa, cập nhật sản phẩm
+- **Quản lý đơn hàng**: Xem và cập nhật trạng thái đơn hàng
+- **Dashboard**: Tổng quan về hoạt động
+
 ### Backend (Node.js + Express)
 - **API RESTful**: Endpoints cho sản phẩm, người dùng, giỏ hàng và đơn hàng
 - **Xác thực JWT**: Bảo mật API với JSON Web Tokens
@@ -22,7 +27,7 @@ Một ứng dụng thương mại điện tử đầy đủ chức năng đượ
 
 ## Công nghệ sử dụng
 
-### Frontend
+### Frontend & Admin
 - **React 19**: Framework JavaScript cho giao diện người dùng
 - **Vite**: Build tool và dev server nhanh
 - **Tailwind CSS v4**: Framework CSS utility-first
@@ -47,8 +52,7 @@ Một ứng dụng thương mại điện tử đầy đủ chức năng đượ
 
 ```
 e-commerce-app/
-├── frontend/          # Ứng dụng React
-│   ├── public/        # Static assets
+├── frontend/          # Ứng dụng React (client)
 │   ├── src/
 │   │   ├── assets/    # Hình ảnh và dữ liệu local
 │   │   ├── components/# Components tái sử dụng
@@ -57,7 +61,14 @@ e-commerce-app/
 │   │   └── ...
 │   ├── package.json
 │   └── vite.config.js
-├── backend/           # API server
+├── admin/             # Admin Panel (React)
+│   ├── src/
+│   │   ├── assets/    # Assets
+│   │   ├── components/# Components (Navbar, Sidebar, Login)
+│   │   └── pages/     # Trang (Orders, Add, List)
+│   ├── package.json
+│   └── vite.config.js
+├── backend/           # API server (Node.js + Express)
 │   ├── config/        # Cấu hình database và cloudinary
 │   ├── controllers/   # Logic xử lý API
 │   ├── middleware/    # Middleware tùy chỉnh
@@ -114,6 +125,24 @@ Chạy frontend:
 ```bash
 npm run dev
 ```
+
+### Admin Setup
+```bash
+cd admin
+npm install
+```
+
+Tạo file `.env` trong thư mục `admin/`:
+```env
+VITE_BACKEND_URL=http://localhost:4000
+```
+
+Chạy admin:
+```bash
+npm run dev
+```
+
+Admin panel chạy trên `http://localhost:5174`
 
 ## API Endpoints
 
@@ -173,14 +202,21 @@ npm run dev
 ## Scripts
 
 ### Frontend
-- `npm run dev` - Chạy dev server
+- `npm run dev` - Chạy dev server (http://localhost:5173)
+- `npm run build` - Build production
+- `npm run preview` - Preview production build
+- `npm run check` - Kiểm tra code với Biome
+- `npm run lint` - Lint với ESLint
+
+### Admin
+- `npm run dev` - Chạy dev server (http://localhost:5174)
 - `npm run build` - Build production
 - `npm run preview` - Preview production build
 - `npm run check` - Kiểm tra code với Biome
 - `npm run lint` - Lint với ESLint
 
 ### Backend
-- `npm run server` - Chạy dev server với nodemon
+- `npm run server` - Chạy dev server với nodemon (port 4000)
 - `npm run start` - Chạy production server
 - `npm run check` - Kiểm tra code với Biome
 - `npm run lint` - Lint với ESLint
@@ -199,6 +235,9 @@ npm run dev
 ```bash
 # Frontend
 cd frontend && npm run build
+
+# Admin
+cd admin && npm run build
 
 # Backend
 cd backend && npm run start
